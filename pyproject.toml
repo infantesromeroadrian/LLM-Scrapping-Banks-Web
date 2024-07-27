@@ -1,0 +1,23 @@
+[tool.poetry]
+name = "llm-scrapping"
+version = "0.1.0"
+description = ""
+authors = ["Adrian Infantes <infantesromeroadrian@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+tiktoken = "^0.7.0"
+jupyter = "^1.0.0"
+prettytable = "^3.10.2"
+tqdm = "^4.66.4"
+requests = "^2.32.3"
+beautifulsoup4 = "^4.12.3"
+openai = "^1.37.1"
+python-dotenv = "^1.0.1"
+streamlit = "^1.37.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
