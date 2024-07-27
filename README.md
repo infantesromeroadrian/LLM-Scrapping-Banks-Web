@@ -12,6 +12,36 @@ LLM-Scrapping es una herramienta de web scraping y análisis de precios que util
 - Gestión de sitios competidores con almacenamiento en JSON.
 - Cálculo de costos de tokenización para estimar gastos de API.
 
+## Flujo de Trabajo
+
+El siguiente diagrama muestra el flujo de trabajo de la herramienta:
+
+```mermaid
+graph TD
+    A[Inicio] --> B[Identificar sitios web objetivo]
+    B --> C[Usar Jira AI para crear tareas de scraping]
+    C --> D[Ejecutar web scraping]
+    D --> E[Procesar contenido scrapeado con LLM]
+    E --> F[Extraer información relevante]
+    F --> G[Actualizar tareas de Jira con resultados]
+    G --> H[Analizar y reportar resultados]
+    H --> I[Fin]
+
+    subgraph "Proceso de Scraping"
+    D --> D1[Scraper BeautifulSoup]
+    D --> D2[Scraper Jina AI]
+    D --> D3[Scraper Personalizado]
+    end
+
+    subgraph "Procesamiento LLM"
+    E --> E1[Dividir contenido en chunks]
+    E1 --> E2[Procesar con OpenAI API]
+    E2 --> E3[Extraer información de precios]
+    end
+```
+
+Este diagrama ilustra el proceso completo desde la identificación de sitios web objetivo hasta el análisis y reporte de resultados, incluyendo los pasos detallados del proceso de scraping y procesamiento con LLM.
+
 ## Requisitos del Sistema
 
 - Python 3.8+
@@ -107,4 +137,3 @@ Este proyecto está licenciado bajo la Licencia MIT. Consulta el archivo `LICENS
 Adrian Infantes - [@adrianinfantes](https://www.linkedin.com/in/adrianinfantes/) - infantesromeroadrian@gmail.com
 
 Link del Proyecto: [https://github.com/infantesromeroadrian/LLM-Scrapping-Banks-Web](https://github.com/infantesromeroadrian/LLM-Scrapping-Banks-Web)
-```
