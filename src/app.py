@@ -4,7 +4,12 @@ from src.features.scraper import Scraper
 from src.features.content_processor import ContentProcessor
 from src.utils.token_cost_calculator import TokenCostCalculator
 from src.models.openai_handler import OpenAIHandler
+from src.features.evaluation import Evaluator
 import json
+import logging
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
 def format_price(price):
@@ -30,6 +35,26 @@ def display_pricing_tier(tier_name, tier_data):
             st.write(f"- {feature}")
 
 
+def display_evaluation_results(evaluation):
+    st.subheader("Evaluation Results")
+    st.metric("Accuracy", f"{evaluation['accuracy']:.2%}")
+
+    if evaluation["missing_info"]:
+        st.write("Missing Information:")
+        for info in evaluation["missing_info"]:
+            st.write(f"- {info}")
+
+    if evaluation["incorrect_info"]:
+        st.write("Incorrect Information:")
+        for info in evaluation["incorrect_info"]:
+            st.write(f"- {info}")
+
+    if evaluation["extra_info"]:
+        st.write("Extra Information:")
+        for info in evaluation["extra_info"]:
+            st.write(f"- {info}")
+
+
 def main():
     st.title("Web Scraping and LLM-powered Analysis Tool")
 
@@ -39,6 +64,7 @@ def main():
     openai_handler = OpenAIHandler()
     token_calculator = TokenCostCalculator()
     content_processor = ContentProcessor(openai_handler, token_calculator)
+    evaluator = Evaluator()
 
     # Sidebar para añadir nuevos sitios
     st.sidebar.header("Add New Competitor Site")
@@ -78,27 +104,68 @@ def main():
             if st.button("Run Analysis"):
                 st.subheader(f"Analyzing {selected_site['name']}")
 
-                # Scraping
-                with st.spinner(f"Scraping {selected_site['name']}..."):
+                # Ejemplo de expected_result (actualizado para Mindsmith AI)
+                expected_result = {
+                    "Free": {
+                        "name": "Free",
+                        "price": "$0",
+                        "features": [
+                            "Create unlimited lessons",
+                            "Two active shared lessons",
+                            "Generate five lessons",
+                            "Authoring tool",
+                            "Share via link, SMS, email, iframe",
+                            "Export dynamic eLearning modules (SCORM)",
+                            "Review and comment links",
+                            "Unlimited learners",
+                            "AI lesson assistant",
+                            "Custom theming",
+                            "Basic chat and email support"
+                        ]
+                    },
+                    "Professional": {
+                        "name": "Professional",
+                        "price": "$39",
+                        "features": [
+                            "Unlimited active lessons",
+                            "GPT-4 model",
+                            "Unlimited premium generations",
+                            "Granular lesson analytics",
+                            "Basic customer support",
+                            "Add your logo",
+                            "Remove 'Built with Mindsmith' tag",
+                            "Multi-language lessons"
+                        ]
+                    },
+                    "Team": {
+                        "name": "Team",
+                        "price": "Custom",
+                        "features": [
+                            "Shared team workspace",
+                            "Branding management tools",
+                            "Multi-language lessons",
+                            "Personalized+priority customer support",
+                            "Export lesson analytics to pdf",
+                            "Real-time lesson collaboration",
+                            "Share lessons on a custom domain",
+                            "Content development assistance",
+                            "Turnkey eLearning development outsourcing"
+                        ]
+                    }
+                }
+
+                # Scraping y análisis
+                with st.spinner(f"Analyzing {selected_site['name']}..."):
                     try:
-                        content = scraper.scrape_jina_ai(selected_site['url'])
-                        st.success("Scraping successful")
-                        st.write(f"Content length: {len(content)} characters")
-                    except Exception as e:
-                        st.error(f"Error scraping {selected_site['name']}: {str(e)}")
-                        return
+                        # Aquí usamos el evaluador para obtener tanto el resultado como la evaluación
+                        evaluation_result = evaluator.evaluate_response(selected_site['name'], user_query,
+                                                                        expected_result)
 
-                # Content processing with LLM
-                with st.spinner(f"Analyzing content for {selected_site['name']}..."):
-                    try:
-                        prompt = f"""Based on the following content from {selected_site['name']}, please answer this question: {user_query}
+                        if "error" in evaluation_result:
+                            st.error(f"Error: {evaluation_result['error']}")
+                            return
 
-                        If the question is about pricing or features, please structure your answer as a JSON object with keys for each pricing tier, including 'name', 'price', and 'features' for each tier.
-
-                        Content: {content}"""
-
-                        result = openai_handler.get_completion([{"role": "user", "content": prompt}])
-                        result_dict = json.loads(result)
+                        result_dict = evaluation_result["raw_response"]
                         st.success("Analysis successful")
 
                         st.header("Analysis Results")
@@ -108,12 +175,21 @@ def main():
                         else:
                             st.write(result_dict.get("answer", "No structured answer available."))
 
+                        # Logging para diagnóstico
+                        logger.info(f"Expected result: {json.dumps(expected_result, indent=2)}")
+                        logger.info(f"Generated result: {json.dumps(result_dict.get('answer', {}), indent=2)}")
+                        logger.info(f"Evaluation result: {json.dumps(evaluation_result, indent=2)}")
+
+                        # Mostrar resultados de la evaluación
+                        display_evaluation_results(evaluation_result)
+
                         # Mostrar JSON original para referencia
                         with st.expander("Show raw JSON data"):
                             st.json(result_dict)
 
                     except Exception as e:
                         st.error(f"Error analyzing content for {selected_site['name']}: {str(e)}")
+                        logger.exception("Error during analysis")
 
                 st.success("Analysis completed")
 
