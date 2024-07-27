@@ -1,0 +1,65 @@
+# Entornos virtuales
+venv/
+env/
+.venv/
+.env/
+
+# Archivos de Python
+*.pyc
+__pycache__/
+*.pyo
+*.pyd
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Archivos de configuración de IDE
+*.swp
+*.swo
+
+# Archivos de sistema operativo
+.DS_Store
+Thumbs.db
+
+# Archivos de log
+*.log
+
+# Archivos de base de datos
+*.db
+*.sqlite3
+
+# Archivos de configuración con información sensible
+.env
+
+# Archivos de caché
+.cache/
+.pytest_cache/
+
+# Archivos de cobertura
+htmlcov/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+
+# Archivos de Jupyter Notebook
+.ipynb_checkpoints
+
+# Archivos específicos del proyecto
+data/competitor_sites.json
