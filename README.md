@@ -106,4 +106,5 @@ Este proyecto está licenciado bajo la Licencia MIT. Consulta el archivo `LICENS
 
 Adrian Infantes - [@adrianinfantes](https://www.linkedin.com/in/adrianinfantes/) - infantesromeroadrian@gmail.com
 
-Link del Proyecto: [https://github.com/infantesromeroadrian/LLM-Scrapping](https://github.com/tu-usuario/LLM-Scrapping)
+Link del Proyecto: [https://github.com/infantesromeroadrian/LLM-Scrapping-Banks-Web](https://github.com/infantesromeroadrian/LLM-Scrapping-Banks-Web)
+```
